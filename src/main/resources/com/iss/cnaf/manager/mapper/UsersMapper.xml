@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iss.cnaf.manager.user.dao.UsersMapper">
+    <resultMap id="BaseResultMap" type="com.iss.cnaf.manager.user.vo.User">
+        <id column="auto_id" jdbcType="INTEGER" property="autoId"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="user_id" jdbcType="VARCHAR" property="userId"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="lasttime" jdbcType="TIMESTAMP" property="lasttime"/>
+        <result column="role_id" jdbcType="INTEGER" property="roleId"/>
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="airport_id" jdbcType="INTEGER" property="airportId"/>
+        <result column="airport_name" jdbcType="VARCHAR" property="airportName"/>
+
+    </resultMap>
+    <resultMap id="BaseResultMap2" type="com.iss.cnaf.manager.user.vo.Register">
+        <id column="auto_id" jdbcType="INTEGER" property="autoId"/>
+        <result column="car_id" jdbcType="VARCHAR" property="carId"/>
+        <result column="car_model" jdbcType="VARCHAR" property="carModel"/>
+        <result column="user_id" jdbcType="VARCHAR" property="userId"/>
+        <result column="pad_id" jdbcType="VARCHAR" property="padId"/>
+        <result column="username" jdbcType="VARCHAR" property="userName"/>
+        <result column="carname" jdbcType="VARCHAR" property="carName"/>
+        <result column="time" jdbcType="VARCHAR" property="time"/>
+        <result column="redate" jdbcType="TIMESTAMP" property="reDate"/>
+        <result column="createTime" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="backTime" jdbcType="TIMESTAMP" property="backTime"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="statusName" jdbcType="VARCHAR" property="statusName"/>
+        <result column="airport_id" jdbcType="INTEGER" property="airportId"/>
+        <result column="con_count" jdbcType="INTEGER" property="conCount"/>
+        <result column="refuel_num" jdbcType="INTEGER" property="refuelNum"/>
+        <result column="pre_status" jdbcType="INTEGER" property="preStatus"/>
+        <result column="preStatusName" jdbcType="INTEGER" property="preStatusName"/>
+        <result column="last_mission_time" jdbcType="TIMESTAMP" property="lastMissionTime"/>
+    </resultMap>
+
+    <resultMap id="StatusResultMap" type="com.iss.cnaf.manager.user.vo.StatusDto">
+        <result column="status_id" jdbcType="VARCHAR" property="status"/>
+        <result column="status_name" jdbcType="VARCHAR" property="description"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+    auto_id, username, password, user_id, phone, lasttime,role_id
+  </sql>
+    <select id="queryUsers" resultMap="BaseResultMap" parameterType="com.iss.cnaf.manager.sys.model.QueryParam">
+        select tu.*, tol.role_name,ta.airport_name
+        from t_user tu
+        left join t_role tol on tu.role_id = tol.id
+        left join t_airport ta on tu.airport_id = ta.airport_id
+        where 1 = 1
+        <if test="airportId != null">
+            and tu.airport_id = #{airportId}
+        </if>
+        order by lasttime desc
+    </select>
+    <select id="queryCountUsers" resultType="java.lang.Long">
+    select   count(*)  from t_user
+  </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_user
+        where auto_id = #{autoId,jdbcType=INTEGER}
+    </select>
+    <!-- 查询登陆  login -->
+    <select id="doLogin" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+    select *
+    from t_user
+    where username = #{username,jdbcType=VARCHAR} and password = #{pass,jdbcType=VARCHAR}
+  </select>
+    <!-- 验证用户编号和用户名是否重复 -->
+    <select id="checkByUserid" parameterType="com.iss.cnaf.manager.user.vo.User" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_user where
+        (user_id = #{userId,jdbcType=VARCHAR}
+        and auto_id != #{autoId,jdbcType=INTEGER} and airport_id = #{airportId})
+        or (username = #{username,jdbcType=VARCHAR}
+        and auto_id != #{autoId,jdbcType=INTEGER} and airport_id = #{airportId})
+    </select>
+    <select id="checkByUser" parameterType="com.iss.cnaf.manager.user.vo.User" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_user where (user_id = #{userId,jdbcType=VARCHAR} and airport_id = #{airportId})
+        or (username = #{username,jdbcType=VARCHAR} and airport_id = #{airportId})
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_user
+    where auto_id = #{autoId,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.iss.cnaf.manager.user.vo.User">
+    insert into t_user (auto_id, username, password, 
+      user_id, phone, lasttime, airport_id
+      )
+    values (#{autoId,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{lasttime,jdbcType=TIMESTAMP}, #{airportId}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.iss.cnaf.manager.user.vo.User">
+        insert into t_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="autoId != null">
+                auto_id,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="lasttime != null">
+                lasttime,
+            </if>
+            <if test="airportId != null">
+                airport_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="autoId != null">
+                #{autoId,jdbcType=INTEGER},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="lasttime != null">
+                #{lasttime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="airportId != null">
+                #{airportId,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.iss.cnaf.manager.user.vo.User">
+        update t_user
+        <set>
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="lasttime != null">
+                lasttime = #{lasttime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where auto_id = #{autoId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.iss.cnaf.manager.user.vo.User">
+    update t_user
+    set username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      lasttime = #{lasttime,jdbcType=TIMESTAMP}
+    where auto_id = #{autoId,jdbcType=INTEGER}
+  </update>
+
+
+    <select id="queryRegister" parameterType="map" resultMap="BaseResultMap2">
+        select r.*,u.worker_name username,c.car_number carname,s.status_name statusName, c.car_model, s1.status_name
+        preStatusName
+        from t_register r left join t_car c on c.car_id = r.car_id and c.airport_id = r.airport_id
+        left join t_worker u on u.worker_id = r.user_id and u.airport_id = r.airport_id
+        left join c_statuscode s on s.status_id = r.status
+        left join c_statuscode s1 on s1.status_id = r.pre_status
+        <where>1=1
+            <if test="airportId != null">
+                and r.airport_id = #{airportId,jdbcType=INTEGER}
+            </if>
+        </where>
+        order by status asc ,redate desc
+
+
+    </select>
+
+    <insert id="insertRegisterHistory" parameterType="com.iss.cnaf.manager.user.vo.RegisterHistory">
+        insert into t_register_history
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="autoId != null">
+                auto_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="carId != null">
+                car_id,
+            </if>
+            <if test="time != null">
+                time,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="reDate != null">
+                redate,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="stopTime != null">
+                stopTime,
+            </if>
+            <if test="backTime != null">
+                backTime,
+            </if>
+            <if test="airportId != null">
+                airport_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="autoId != null">
+                #{autoId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="carId!= null">
+                #{carId,jdbcType=VARCHAR},
+            </if>
+            <if test="time != null">
+                #{time,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="reDate != null">
+                #{reDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="stopTime != null">
+                #{stopTime,jdbcType=VARCHAR},
+            </if>
+            <if test="backTime != null">
+                #{backTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="airportId != null">
+                #{airportId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateRegisterstatus" parameterType="com.iss.cnaf.manager.user.vo.Register">
+  	 update t_register
+     set status = #{status,jdbcType=VARCHAR}, stopTime = #{stopTime,jdbcType=VARCHAR}
+     where auto_id = #{autoId,jdbcType=INTEGER}
+  </update>
+    <update id="updateStatusByUserId" parameterType="com.iss.cnaf.manager.user.vo.Register">
+  	 update t_register
+     set status = #{status,jdbcType=VARCHAR}
+     where user_id = #{userId,jdbcType=VARCHAR}
+  </update>
+    <update id="updaStatusByCarId" parameterType="com.iss.cnaf.manager.user.vo.Register">
+  	 update t_register
+     set status = #{status,jdbcType=VARCHAR}
+     where car_id = #{carId,jdbcType=VARCHAR}
+  </update>
+    <update id="updateRegisterCount" parameterType="com.iss.cnaf.manager.user.vo.Register">
+  	 update t_register
+     set con_count = #{conCount,jdbcType=INTEGER}
+     where auto_id = #{autoId,jdbcType=INTEGER}
+  </update>
+    <!--修改任务完成时间-->
+    <update id="updateLastMissionTimeByCarId" parameterType="com.iss.cnaf.manager.user.vo.Register">
+    update t_register
+    set last_mission_time = #{lastMissionTime,jdbcType=TIMESTAMP}
+    where car_id = #{carId,jdbcType=VARCHAR}
+  </update>
+
+    <delete id="deleteRegisterById">
+  	delete from t_register where auto_id = #{autoId,jdbcType=INTEGER}
+  </delete>
+
+    <!-- 修改任务 -->
+    <update id="updateTaskPerson" parameterType="com.iss.cnaf.manager.user.vo.Register">
+  	 UPDATE t_workorder
+		SET worker_id =  #{userId,jdbcType=VARCHAR}
+		WHERE
+			flight_id in (
+				SELECT
+					info.auto_id
+				FROM
+					t_flight_info info
+				LEFT JOIN routearrange r ON (
+					info.FLNO = r.NEXTFLY
+					AND info.FLDT = r.FLIGHT_DATE
+					AND r.CAR_ID = #{carId,jdbcType=VARCHAR}
+				)
+				WHERE
+					r.STARTTIME = #{st}
+				AND r.ENDTIME = #{et}
+			)
+		AND status = '0'
+		AND car_id = #{carId,jdbcType=VARCHAR}
+  </update>
+
+    <update id="updateRole">
+  	 UPDATE t_user
+		SET role_id =  #{roleId,jdbcType=INTEGER}
+	WHERE
+		auto_id = #{autoId,jdbcType=VARCHAR}
+  </update>
+
+    <select id="checkCarValidate" parameterType="com.iss.cnaf.manager.user.vo.Register" resultMap="BaseResultMap2">
+        select * from t_register
+        where
+        car_id = #{carId,jdbcType=VARCHAR}
+        <if test="airportId != null and airportId != ''">
+            and airport_id = #{airportId, jdbcType=INTEGER}
+        </if>
+        <if test="autoId != null and autoId != ''">
+            and auto_id != #{autoId,jdbcType=INTEGER}
+        </if>
+    </select>
+
+    <select id="checkUserValidate" parameterType="com.iss.cnaf.manager.user.vo.Register" resultMap="BaseResultMap2">
+        select * from t_register
+        where
+        user_id = #{userId,jdbcType=VARCHAR}
+        <if test="airportId != null and airportId != ''">
+            and airport_id = #{airportId, jdbcType=INTEGER}
+        </if>
+    </select>
+
+    <select id="checkRoleId" parameterType="com.iss.cnaf.manager.user.vo.User" resultMap="BaseResultMap">
+  	select * from t_user where role_id = #{roleId};
+  </select>
+
+    <select id="selectByCarId" parameterType="com.iss.cnaf.manager.user.vo.Register" resultMap="BaseResultMap2">
+        select t_register.*,t_worker.worker_name as username from t_register left join t_worker on
+        t_worker.worker_id=t_register.user_id and t_worker.airport_id = t_register.airport_id
+        where
+        car_id = #{carId, jdbcType=VARCHAR}
+        <if test="airportId != null and airportId != ''">
+            and t_register.airport_id = #{airportId, jdbcType=INTEGER}
+        </if>
+    </select>
+
+    <select id="selectByWorkerId" parameterType="com.iss.cnaf.manager.user.vo.Register" resultMap="BaseResultMap2">
+        select * from t_register
+        where user_id = #{userId, jdbcType=VARCHAR} AND status != '10'
+    </select>
+    <select id="selectByPrepareId" parameterType="com.iss.cnaf.manager.user.vo.Register" resultMap="BaseResultMap2">
+        select * from t_register
+        where user_id = #{userId, jdbcType=VARCHAR}
+    </select>
+    <select id="selectPreproceByWorkerId" parameterType="com.iss.cnaf.manager.user.vo.Register"
+            resultMap="BaseResultMap2">
+        select * from t_register
+        where user_id = #{userId, jdbcType=VARCHAR} 
+    </select>
+
+
+    <!-- 总数清零 -->
+    <update id="setRefuelNumZreo" parameterType="com.iss.cnaf.manager.user.vo.Register">
+  	 update t_register set t_register.refuel_num = 0 where auto_id = #{autoId, jdbcType=INTEGER}
+  </update>
+
+    <!-- 将所有人的总加油量（refuel_num） 和 连续加油架次（con_count）都清零-->
+    <update id="setRefuelNumZreoAndConCountZreo">
+        update t_register set t_register.refuel_num = 0, con_count = 0
+    </update>
+
+    <!-- 修改已加航班次数 -->
+    <update id="setRefuelNumByCarId" parameterType="com.iss.cnaf.manager.user.vo.Register">
+  	 update t_register set t_register.refuel_num = #{refuelNum,jdbcType=INTEGER} where car_id = ${carId}
+  </update>
+    <update id="updateRegisterPreStatusByCarId" parameterType="java.lang.String">
+        update t_register set pre_status = '0' WHERE car_id = ${carId}
+    </update>
+
+    <update id="updateRegisterPreStatus" parameterType="com.iss.cnaf.manager.user.vo.Register">
+        update t_register set pre_status = ${preStatus} WHERE car_id = ${carId}
+    </update>
+
+    <update id="updateRegisterPreStatus1ByCarId" parameterType="java.lang.String">
+        update t_register set pre_status = '1' WHERE car_id = ${carId}
+    </update>
+    <update id="updateRegisterPreStatusByUserId" parameterType="com.iss.cnaf.manager.user.vo.Register">
+        update t_register set pre_status = ${preStatus} WHERE user_id = ${userId}
+    </update>
+    <!-- 根据id查询记录 -->
+    <select id="selectRegisterByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap2">
+    select * from t_register
+    where auto_id = #{autoId,jdbcType=INTEGER}
+  </select>
+
+    <!-- 根据ID删除记录 -->
+    <delete id="deleteRegisterByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_register
+    where auto_id = #{autoId,jdbcType=INTEGER}
+  </delete>
+
+    <insert id="insertRegister" parameterType="com.iss.cnaf.manager.user.vo.Register">
+        insert into t_register
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="autoId != null">
+                auto_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="carId != null">
+                car_id,
+            </if>
+            <if test="padId != null">
+                pad_id,
+            </if>
+            <if test="time != null">
+                time,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="reDate != null">
+                redate,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="stopTime != null">
+                stopTime,
+            </if>
+            <if test="refuelNum != null">
+                refuel_num,
+            </if>
+            <if test="lastMissionTime != null">
+                last_mission_time,
+            </if>
+            <if test="airportId != null">
+                airport_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="autoId != null">
+                #{autoId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="carId!= null">
+                #{carId,jdbcType=VARCHAR},
+            </if>
+
+            <if test="padId!= null">
+                #{padId,jdbcType=VARCHAR},
+            </if>
+            <if test="time != null">
+                #{time,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="reDate != null">
+                #{reDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="stopTime != null">
+                #{stopTime,jdbcType=VARCHAR},
+            </if>
+            <if test="refuelNum != null">
+                #{refuelNum,jdbcType=INTEGER},
+            </if>
+            <if test="lastMissionTime != null">
+                #{lastMissionTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="airportId != null">
+                #{airportId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="queryPersonNum" resultType="java.lang.String">
+  	select count(*) from t_register where status != 1
+  </select>
+
+    <select id="queryStatu" parameterType="com.iss.cnaf.manager.user.vo.Register" resultMap="BaseResultMap2">
+  	select * from t_register where user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+
+    <select id="queryRegisterByCarId" parameterType="com.iss.cnaf.manager.user.vo.Register" resultMap="BaseResultMap2">
+  	select * from t_register where car_id = #{carId,jdbcType=VARCHAR}
+  </select>
+
+    <select id="queryRegistryWorker" resultMap="BaseResultMap2">
+    
+    SELECT
+	r.user_id,
+	w.worker_name as username
+	FROM
+	t_register r
+	LEFT JOIN t_worker w ON w.worker_id = r.user_id
+	WHERE
+	status NOT IN('10','11','12')
+  </select>
+    <select id="queryAllRegistryWorker" resultMap="BaseResultMap2">
+    SELECT
+	r.user_id,
+	w.worker_name as username
+	FROM
+	t_register r
+	LEFT JOIN t_worker w ON w.worker_id = r.user_id
+    </select>
+
+
+    <select id="queryStatusList" resultMap="StatusResultMap">
+        SELECT * FROM c_statuscode
+    </select>
+    <select id="selectByPadId" parameterType="java.lang.String" resultMap="BaseResultMap2">
+        select * from t_register where pad_id = #{padId,jdbcType=VARCHAR}
+    </select>
+    <select id="queryRegisterByCarIdAndStatusNotEquals10" parameterType="java.lang.String" resultMap="BaseResultMap2">
+        select * from t_register where user_id = #{userId,jdbcType=VARCHAR} and status != '10'
+    </select>
+
+
+    <update id="updaStatusByAutoId" parameterType="com.iss.cnaf.manager.user.vo.Register">
+        update t_register
+        set status = #{status,jdbcType=VARCHAR}
+        where auto_id = #{autoId,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateStatusAndPreStatusByCarId" parameterType="com.iss.cnaf.manager.user.vo.Register">
+        update t_register
+        set status = #{status,jdbcType=VARCHAR},
+            pre_status = #{preStatus,jdbcType=VARCHAR}
+        where car_id = #{carId,jdbcType=VARCHAR}
+
+    </update>
+
+</mapper>

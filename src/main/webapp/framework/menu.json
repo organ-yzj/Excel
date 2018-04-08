@@ -1,0 +1,201 @@
+[
+	{
+        "id": 1,
+        "text": "航班管理",
+        "children": [
+            {
+                "id": 11,
+                "text": "航班列表",
+                "attributes" :{
+                    "url": "flight/flightList.do"
+                }
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "text": "派工管理",
+        "children": [
+        	 {
+                "id": 23,
+                "text": "登记管理",
+                "attributes" :{
+                    "url": "user/registryIndex.do"
+                }
+            },
+            {
+                "id": 25,
+                "text": "派工结果",
+                "attributes" :{
+                    "url": "routearrange/routearrangeIndex.do"
+                }
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "text": "加油任务管理",
+        "children": [
+             {
+                "id": 24,
+                "text": "加油任务管理记录",
+                "attributes" :{
+                "url": "workorder/workorderIndex.do"
+                }
+             }
+        ]
+    },
+    {
+        "id": 4,
+        "text": "系统管理",
+        "children": [
+            {
+                "id": 40,
+                "text": "系统管理员管理",
+                 "attributes" :{
+                    "url": "user/userIndex.do"
+                }
+        	 },
+            {
+                "id": 41,
+                "text": "加油员管理",
+                "attributes" :{
+                    "url": "worker/workerIndex.do"
+                }
+            },
+            {
+                "id": 42,
+                "text": "加油车管理",
+                "attributes" :{
+                    "url": "car/carIndex.do"
+                }
+                
+            },
+            
+             {
+                "id": 43,
+                "text": "环境管理",
+                "attributes" :{
+                    "url": "environment/environmentIndex.do"
+                }
+            },
+             {
+                "id": 44,
+                "text": "移动设备管理",
+                "attributes" :{
+                    "url": "pad/padIndex.do"
+                }
+            },
+             {
+                "id": 46,
+                "text": "停机位维护",
+                "attributes" :{
+                "url": "stnd/stndIndex.do"
+                }
+             },
+             {
+                "id": 47,
+                "text": "停机位邻接关系",
+                "attributes" :{
+                "url": "stand/standIndex.do"
+                }
+             },
+             {
+                "id": 48,
+                "text": "参数管理",
+                "attributes" :{
+                "url": "flight/paramsManager.do"
+                }
+             },
+             
+              {
+                "id": 49,
+                "text": "角色管理",
+                 "attributes" :{
+                    "url": "role/roleIndex.do"
+                }
+        	 },
+        	 {
+                "id": 410,
+                "text": "飞机场管理",
+                "attributes" :{
+                "url": "airport/airportIndex.do"
+                }
+             },
+             {
+                "id": 420,
+                "text": "航空公司二字码管理",
+                "attributes" :{
+                "url": "twocode/twoCodeManager.do"
+                }
+             },
+             {
+                "id": 430,
+                "text": "菜单资源管理",
+                "attributes" :{
+                "url": "power/powerIndex.do"
+                }
+             },
+              {
+                "id": 440,
+                "text": "机场三字码管理",
+                "attributes" :{
+                "url": "flightAirport/airportManager.do"
+                }
+             }
+        ]
+    },
+    {
+        "id": 5,
+        "text": "统计管理",
+        "children": [
+          
+            {
+                "id": 51,
+                "text": "加油统计",
+                "attributes" :{
+                    "url": "workorder/workgasByCar.do"
+                }
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "text": "加油车行驶记录",
+        "children": [
+            {
+                "id": 61,
+                "text": "行驶违规记录",
+                "attributes" :{
+                 "url": "carlog/carlogIndex.do"
+              }
+            }
+        ]
+    },
+    {
+        "id": 7,
+        "text": "加油车视频记录",
+        "children": [
+            {
+                "id": 71,
+                "text": "加油车视频记录",
+                "attributes" :{
+                 "url": "video/carVideoIndex.do"
+              }
+            }
+        ]
+    },
+     {
+        "id": 8,
+        "text": "地图",
+        "children": [
+            {
+                "id": 81,
+                "text": "地图",
+                "attributes" :{
+                 "url": "map/mapIndex.do"
+              }
+            }
+        ]
+    }
+]

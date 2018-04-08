@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iss.cnaf.excel.repair.dao.RepairMapper">
+  <resultMap id="BaseResultMap" type="com.iss.cnaf.excel.repair.vo.Repair">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="car_id" jdbcType="VARCHAR" property="carId" />
+      <result column="repair_date" jdbcType="VARCHAR" property="repairDate" />
+      <result column="reason" jdbcType="VARCHAR" property="reason" />
+      <result column="money" jdbcType="VARCHAR" property="money" />
+      <result column="position" jdbcType="VARCHAR" property="position" />
+      <result column="manufactor" jdbcType="VARCHAR" property="manufactor" />
+      <result column="phone" jdbcType="VARCHAR" property="phone" />
+      <result column="invoice" jdbcType="VARCHAR" property="invoice" />
+      <result column="buy_date" jdbcType="VARCHAR" property="buyDate" />
+      <result column="driver" jdbcType="VARCHAR" property="driver" />
+  </resultMap>
+
+  <select id="queryRepair" resultMap="BaseResultMap">
+    SELECT * FROM t_repair
+  </select>
+
+  <insert id="insertList">
+    insert into
+    t_repair(car_id,repair_date,reason,money,position,manufactor,phone,invoice,buy_date,driver)
+    values
+    <foreach collection="list" item="item" index="index"
+             separator=",">
+      (#{item.carId,jdbcType=VARCHAR},#{item.repairDate,jdbcType=BIGINT},#{item.reason,jdbcType=INTEGER},
+      #{item.money,jdbcType=VARCHAR},#{item.position,jdbcType=BIGINT},#{item.manufactor,jdbcType=INTEGER},
+      #{item.phone,jdbcType=VARCHAR},#{item.invoice,jdbcType=BIGINT},#{item.buyDate,jdbcType=INTEGER},
+      #{item.driver,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+
+</mapper>
